@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator
 from django.contrib.auth import get_user_model
 from .forms import PostForm
-from django.contrib.auth.decorators import login_required 
+from django.contrib.auth.decorators import login_required
 
 User = get_user_model()
 
@@ -62,8 +62,8 @@ def post_detail(request, post_id):
 @login_required
 def post_create(request):
     form = PostForm(request.POST)
-    context = {'form':form }
-    if request.method == 'POST' :
+    context = {'form' : form}
+    if request.method == 'POST':
         if form.is_valid():
             post = form.save(commit=False)
             post.author = request.user
@@ -72,7 +72,8 @@ def post_create(request):
         else:
             return render(request, 'posts/create_post.html', context)
     else:
-        return render(request, 'posts/create_post.html', context )              
+        return render(request, 'posts/create_post.html', context)              
+
 
 @login_required
 def post_edit(request, post_id):
