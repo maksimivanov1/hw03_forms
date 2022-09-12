@@ -70,32 +70,27 @@ def post_create(request):
             post.save()
             return redirect('posts:profile', request.user.username)
         else:
-            return redirect('posts:profile', request.user.username)
+            return render(request, 'posts/create_post.html', context)
     else:
         return render(request, 'posts/create_post.html', context )              
 
 @login_required
 def post_edit(request, post_id):
-    post = get_object_or_404(Post, post_id=post_id, author=request.user)
-    if request.user == post.author :
-        if request.method == 'POST':
-            form = PostForm(instance=post)
-            if form.is_valid():
-                form.save()
-                return redirect('posts/post_detail.html', post_id=post_id)
-            else:
-                return render(request,'posts/create_post.html',
-                            {'form':form,
-                             'post':post,
-                             'is_edit':True})    
-        else:
-            form = PostForm(instance=post)
-            return render(request,'posts/create_post.html',
-                            {'form':form,
-                             'post':post,
-                             'is_edit':True})
-    else:
-        return redirect('posts/post_detail.html', post_id=post_id)
+    post = get_object_or_404(Post, id=post_id)
+    form = PostForm(request.POST or None, instance=post)
+    context = {'form':form,
+               'is_edit':True,
+               'post_id':post_id}
+    if request.user != post.author :
+        return redirect('posts:post_detail', post_id)
+    if request.method == 'POST':
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.save()
+            return redirect('posts:post_detail', post_id)
+    return render(request, 'posts/create_post.html', context)
+                            
+        
 
 
 

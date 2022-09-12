@@ -34,10 +34,10 @@
                 </div>
               {% endfor %}
             {% endif %}
-              <form method="post" action="{% if not is_edit%}
+              <form method="post" action="{% if not is_edit %}
                                             {% url 'posts:post_create' %}
                                           {% else %}
-                                            {% url 'posts:post_edit' post_id=post.id %}
+                                            {% url 'posts:post_edit' post_id %}
                                           {% endif %}">
                 {% csrf_token %}
                 {% for field in form %} 
