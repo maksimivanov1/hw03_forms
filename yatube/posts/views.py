@@ -37,7 +37,6 @@ def group_posts(request, slug):
 
 
 def profile(request, username):
-    # Здесь код запроса к модели и создание словаря контекста
     author = get_object_or_404(User, username=username)
     post_list = author.posts.select_related('group')
     paginator = Paginator(post_list, COUNT)
@@ -62,7 +61,7 @@ def post_detail(request, post_id):
 @login_required
 def post_create(request):
     form = PostForm(request.POST)
-    context = {'form' : form}
+    context = {'form': form}
     if request.method == 'POST':
         if form.is_valid():
             post = form.save(commit=False)
@@ -72,17 +71,17 @@ def post_create(request):
         else:
             return render(request, 'posts/create_post.html', context)
     else:
-        return render(request, 'posts/create_post.html', context)              
+        return render(request, 'posts/create_post.html', context)
 
 
 @login_required
 def post_edit(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     form = PostForm(request.POST or None, instance=post)
-    context = {'form':form,
-               'is_edit':True,
-               'post_id':post_id}
-    if request.user != post.author :
+    context = {'form': form,
+               'is_edit': True,
+               'post_id': post_id}
+    if request.user != post.author:
         return redirect('posts:post_detail', post_id)
     if request.method == 'POST':
         if form.is_valid():
@@ -90,12 +89,3 @@ def post_edit(request, post_id):
             post.save()
             return redirect('posts:post_detail', post_id)
     return render(request, 'posts/create_post.html', context)
-                            
-        
-
-
-
-        
-        
-
-
