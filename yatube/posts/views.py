@@ -2,18 +2,17 @@ from django.shortcuts import render
 from django.shortcuts import redirect
 from .models import Post, Group
 from django.shortcuts import get_object_or_404
-from django.core.paginator import Paginator
 from django.contrib.auth import get_user_model
 from .forms import PostForm
 from django.contrib.auth.decorators import login_required
-from posts import utilits
+from posts import utils
 
 User = get_user_model()
 
 
 def index(request):
     post_list = Post.objects.all().order_by('-pub_date')
-    page_obj = utilits.paginating(request, post_list)
+    page_obj = utils.paginating(request, post_list)
     context = {
         'page_obj': page_obj,
     }
@@ -23,7 +22,7 @@ def index(request):
 def group_posts(request, slug):
     group = get_object_or_404(Group, slug=slug)
     post_list = Post.objects.all().order_by('-pub_date')
-    page_obj = utilits.paginating(request, post_list)
+    page_obj = utils.paginating(request, post_list)
     context = {
         'group': group,
         'page_obj': page_obj,
@@ -34,7 +33,7 @@ def group_posts(request, slug):
 def profile(request, username):
     author = get_object_or_404(User, username=username)
     post_list = author.posts.select_related('group')
-    page_obj = utilits.paginating(request, post_list)
+    page_obj = utils.paginating(request, post_list)
     context = {
         'author': author,
         'page_obj': page_obj
