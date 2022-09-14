@@ -6,17 +6,14 @@ from django.core.paginator import Paginator
 from django.contrib.auth import get_user_model
 from .forms import PostForm
 from django.contrib.auth.decorators import login_required
+from posts import utilits
 
 User = get_user_model()
-
-COUNT = 10
 
 
 def index(request):
     post_list = Post.objects.all().order_by('-pub_date')
-    paginator = Paginator(post_list, COUNT)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    page_obj = utilits.paginating(request, post_list)
     context = {
         'page_obj': page_obj,
     }
@@ -26,9 +23,7 @@ def index(request):
 def group_posts(request, slug):
     group = get_object_or_404(Group, slug=slug)
     post_list = Post.objects.all().order_by('-pub_date')
-    paginator = Paginator(post_list, COUNT)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    page_obj = utilits.paginating(request, post_list)
     context = {
         'group': group,
         'page_obj': page_obj,
@@ -39,9 +34,7 @@ def group_posts(request, slug):
 def profile(request, username):
     author = get_object_or_404(User, username=username)
     post_list = author.posts.select_related('group')
-    paginator = Paginator(post_list, COUNT)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    page_obj = utilits.paginating(request, post_list)
     context = {
         'author': author,
         'page_obj': page_obj
@@ -50,7 +43,6 @@ def profile(request, username):
 
 
 def post_detail(request, post_id):
-    # Здесь код запроса к модели и создание словаря контекста
     post = get_object_or_404(Post.objects.select_related(), id=post_id)
     context = {
         'post': post
